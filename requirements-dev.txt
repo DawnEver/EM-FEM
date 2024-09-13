@@ -2,3 +2,4 @@
 # coverage
 ruff
 mypy
+pre-commit

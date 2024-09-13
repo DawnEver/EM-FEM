@@ -13,6 +13,7 @@
 - gmsh
 
 ## ToDo
+- support arc/splines/... in modelling
 - support nonlinear material -> update S in loop
 - saturation control
 - different boundary conditions
