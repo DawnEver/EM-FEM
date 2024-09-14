@@ -1,6 +1,16 @@
 import numpy as np
 
-__all__ = ['sum_area']
+__all__ = ['sum_area', 'calc_centroid']
+
+
+def calc_centroid(vertex_mat: np.ndarray) -> np.ndarray:
+    """
+    calculate the centroid coordinates of triangles
+    >>> vertex_mat = np.array([[[1, 1], [2, 2], [3, 3]], [[4, 4], [5, 5], [6, 6]]])
+    >>> np.all(np.isclose(calc_centroid(vertex_mat), np.array([[2., 2.],[5., 5.]])))
+    np.True_
+    """
+    return np.sum(vertex_mat, axis=1) / 3
 
 
 def sum_area(vertex_mat: np.ndarray) -> np.number:

@@ -26,7 +26,7 @@ model = [
             [2.0, 0.0],
         ],
         'material_type': 'steel',
-        'material_name': 'iron',
+        'material_name': 'demo_steel',
         'mesh_size': 0.5,
     },
     {

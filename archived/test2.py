@@ -4,31 +4,10 @@ import meshio
 
 from utils import sum_area
 from logger import log
+from material import material_db_dict
 
 ## CONSTANTs
 MIU0 = 4 * np.pi * 1e-7
-
-## Materials
-# TODO external Material Database
-material_db_dict = {
-    'steel': {
-        'iron': {
-            'bh': None,  # if bh is None, seek miu_r
-            'miu_r': 1000,
-        },
-    },
-    'copper': {
-        'cu': {
-            'miu_r': 1,
-        },
-    },
-    'magnet': {},
-    'other': {
-        'air': {
-            'miu_r': 1,
-        },
-    },
-}
 
 ## Read Mesh
 geo_path = '/Users/linxu/Files/Workspace/EM-FEM/data/test.msh'

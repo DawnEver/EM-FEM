@@ -82,6 +82,12 @@ lint.ignore = [
     "PT009",
     # [Conflict] single-line-implicit-string-concatenation
     "ISC001",
+    # Too many statements ( > 50)
+    "PLR0915",
+    # Too many arguments in function definition ( > 5)
+    "PLR0913",
+    # Too many branches ( > 12)
+    "PLR0912",
 ]
 lint.flake8-quotes = {inline-quotes = "single", multiline-quotes = "double"}
 format.quote-style="single"

@@ -27,7 +27,7 @@ model = [
         #         [2.0, 0.0],
         #     ],
         #     'material_type':'steel',
-        #     'material_name':'iron',
+        #     'material_name':'demo_steel',
         #     'mesh_size':1,
         # },{
         'shape': 'polygon',
@@ -90,7 +90,7 @@ lines = mesh.cells_dict['line']
 # TODO Material Database
 material_dict = {
     'steel': {
-        'Iron': {
+        'demo_steel': {
             'bh': None,  # if bh is None, seek miu_r
             'miu_r': 1000,
         },
@@ -110,7 +110,7 @@ material_dict = {
 
 miu0 = 4 * np.pi * 1e-7
 miu_copper = 1 * miu0
-miu_iron = 1000 * miu0
+miu_demo_steel = 1000 * miu0
 miu_air = 1 * miu0
 
 r_stator_o = 0.075
@@ -131,7 +131,7 @@ domain_current_density_dict = {
 }  # group_id J/3: current_density divide 3 here
 
 domain_copper = list(domain_current_density_dict.keys())
-domain_iron = [1, 4, 8, 11, 13, 15, 17]
+domain_demo_steel = [1, 4, 8, 11, 13, 15, 17]
 domain_air = [2, 3, 6, 7, 10]
 
 boundary_dirichlet = {0: []}  # A_const:[vertex_ids]
@@ -181,9 +181,9 @@ for i_iter in range(max_num_iter + 1):
             T_mat[vertex_ids] += current
 
             miu = miu_copper
-        elif group_id in domain_iron:
+        elif group_id in domain_demo_steel:
             # calculate miu
-            miu = miu_iron
+            miu = miu_demo_steel
             # last_B = last_B_mat[i_trig]
             # miu = f(B)
         else:

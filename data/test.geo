@@ -1,15 +1,15 @@
 Geometry.AutoCoherence = 0;
 // Define mesh
 
-mesh_size_iron = 3;
+mesh_size_demo_steel = 3;
 mesh_size_cu = 3;
 mesh_size_air = 3;
 
 // define points
-Point(1) = {-50, 50, 0, mesh_size_iron};
-Point(2) = {50,-50, 0, mesh_size_iron};
-Point(3) = {-50,-50, 0, mesh_size_iron};
-Point(4) = {50,50, 0, mesh_size_iron};
+Point(1) = {-50, 50, 0, mesh_size_demo_steel};
+Point(2) = {50,-50, 0, mesh_size_demo_steel};
+Point(3) = {-50,-50, 0, mesh_size_demo_steel};
+Point(4) = {50,50, 0, mesh_size_demo_steel};
 Point(5) = {-10,10, 0, mesh_size_cu};
 Point(6) = {10,-10, 0, mesh_size_cu};
 Point(7) = {-10,-10, 0, mesh_size_cu};
@@ -46,15 +46,15 @@ Plane Surface(3) = {3};
 // physical surface
 Physical Surface("group@c1@copper@cu") = {1};
 Color Red {Surface{1};}
-Physical Surface("group@s1@steel@iron") = {2};
+Physical Surface("group@s1@steel@demo_steel") = {2};
 Color Green {Surface{2};}
 Physical Surface("group@a1@other@air") = {3};
 Color Orange {Surface{3};}
 
 // boundary condition
 // examples
-// Physical Line("boundary@dirichlet@0") = {1};
+// Physical Line("boundary@dirichlet@0") = {4};
 // Physical Line("boundary@dirichlet@1e-2") = {2};
-Physical Line("boundary@symmetry@odd1") = {2};
-Physical Line("boundary@symmetry@odd2") = {4};
+// Physical Line("boundary@symmetry@odd1") = {2};
+// Physical Line("boundary@symmetry@odd2") = {4};
 // Physical Line("boundary@dirichlet@0") = {1,2,3,4};

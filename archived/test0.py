@@ -5,11 +5,11 @@ import matplotlib.pyplot as plt
 
 ### Read CSV
 if 1:  # coarse mesh
-    trigInfoPath = './coarse/trigInfo.csv'
-    vertInfoPath = './coarse/vertInfo.csv'
+    trigInfoPath = '/Users/linxu/Files/Workspace/EM-FEM/data/coarse/trigInfo.csv'
+    vertInfoPath = '/Users/linxu/Files/Workspace/EM-FEM/data/coarse/vertInfo.csv'
 else:  # extra fine mesh
-    trigInfoPath = './extraFine/trigInfo.csv'
-    vertInfoPath = './extraFine/vertInfo.csv'
+    trigInfoPath = '/Users/linxu/Files/Workspace/EM-FEM/data/extraFine/trigInfo.csv'
+    vertInfoPath = '/Users/linxu/Files/Workspace/EM-FEM/data/extraFine/vertInfo.csv'
 
 with open(trigInfoPath, encoding='utf-8') as f:
     trigInfoMat = np.loadtxt(f, delimiter=',', dtype=np.int16)
@@ -19,11 +19,11 @@ with open(vertInfoPath, encoding='utf-8') as f:
 
 ### definitions
 permeability_copper = 1
-permeability_iron = 1000
+permeability_demo_steel = 1000
 permeability_air = 1
 
 domain_copper = [5, 9, 12, 14, 16, 18]
-domain_iron = [1, 4, 8, 11, 13, 15, 17]
+domain_demo_steel = [1, 4, 8, 11, 13, 15, 17]
 domain_air = [2, 3, 6, 7, 10]
 
 r_stator_o = 0.075
