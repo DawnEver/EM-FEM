@@ -1,19 +1,20 @@
 import numpy as np
-import matplotlib.pyplot as plt
+from plot import plot_map, PlotMapType
 
-from utils import sum_area
+from utils import sum_area, calc_centroid
 from logger import log
 from solver import solve_magnetostatic
 from mesh import read_nastran
 
 ## Read Mesh
-mesh_path = """/Users/linxu/Files/Workspace/EM-FEM/data/
-extraFine/Synchronous_Reluctance_Machine_MeshExport_ExtraFine_NoSlide.nas"""
-mesh_path = """/Users/linxu/Files/Workspace/EM-FEM/data/
-coarse/Synchronous_Reluctance_Machine_MeshExport_Coarse_NoSlide.nas"""
+if 0:
+    mesh_path = '/Users/linxu/Files/Workspace/EM-FEM/data/extraFine/synrm_extrafine.nas'
+else:
+    mesh_path = '/Users/linxu/Files/Workspace/EM-FEM/data/coarse/synrm_coarse.nas'
 trigInfoMat, trigGroupMat, vertInfoMat, group_list, boundary_dict, material_in_use_dict = read_nastran(
     mesh_path=mesh_path
 )
+
 
 ## current -> current density
 n_turn = 100
@@ -53,10 +54,36 @@ total_flux = max(A_mat)
 msg = f'Total Energy: {total_Energy}; Total Flux: {total_flux}'
 log(msg, 'INFO')
 
-# Plot
-figure = plt.figure()
-plt.title('Flux Density')
-plt.scatter(vertInfoMat[:, 0], vertInfoMat[:, 1], c=A_mat)
-plt.colorbar()
 
-plt.show()
+# Plot
+boundary = 1e20
+plot_map(
+    title='Magnetic Vector Potential[Wb/m]',
+    vertInfoMat=vertInfoMat,
+    c_mat=A_mat,
+    boundary=(-boundary, boundary),
+    plot_type=PlotMapType.Coutourf,
+)
+plot_map(
+    title='Current Density[A/m^2]',
+    vertInfoMat=vertInfoMat,
+    c_mat=T_mat,
+    boundary=(-boundary, boundary),
+    plot_type=PlotMapType.Coutourf,
+)
+vertex_mat = vertInfoMat[trigInfoMat]
+centroid_mat = calc_centroid(vertex_mat)
+plot_map(
+    title='Flux Density[T]',
+    vertInfoMat=centroid_mat,
+    c_mat=B_mat,
+    boundary=(-boundary, boundary),
+    plot_type=PlotMapType.Coutourf,
+)
+plot_map(
+    title='Energy[W]',
+    vertInfoMat=centroid_mat,
+    c_mat=Energy_mat,
+    boundary=(-boundary, boundary),
+    plot_type=PlotMapType.Coutourf,
+)

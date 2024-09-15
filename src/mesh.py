@@ -87,8 +87,8 @@ def read_gmsh(mesh_path: str):
 def read_nastran(mesh_path: str):
     mesh = meshio.nastran.read(mesh_path)
     vertInfoMat = mesh.points[:, 0:2]  # 2d fea
-    trigGroupMat = mesh.cell_data_dict['nastran:ref']['triangle6']
-    trigInfoMat = mesh.cells_dict['triangle6'][:, :3]
+    trigGroupMat = np.tile(mesh.cell_data_dict['nastran:ref']['triangle6'], 2)
+    trigInfoMat = np.vstack((mesh.cells_dict['triangle6'][:, :3], mesh.cells_dict['triangle6'][:, 3:]))
 
     material_in_use_dict = {
         'cu': {'material_type': 'copper'},

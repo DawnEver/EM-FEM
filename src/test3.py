@@ -7,7 +7,8 @@ from mesh import read_gmsh
 from plot import plot_map, PlotMapType
 
 ## Read Mesh
-mesh_path = '/Users/linxu/Files/Workspace/EM-FEM/data/test.msh'
+mesh_path = '/Users/linxu/Files/Workspace/EM-FEM/data/test-DI_Chong.msh'
+mesh_path = '/Users/linxu/Files/Workspace/EM-FEM/data/test-T_T_Lipo.msh'
 trigInfoMat, trigGroupMat, vertInfoMat, group_list, boundary_dict, material_in_use_dict = read_gmsh(mesh_path=mesh_path)
 
 ## current -> current density

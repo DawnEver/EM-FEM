@@ -51,10 +51,12 @@ Color Green {Surface{2};}
 Physical Surface("group@a1@other@air") = {3};
 Color Orange {Surface{3};}
 
-// boundary condition
-// examples
+// boundary condition examples
 // Physical Line("boundary@dirichlet@0") = {4};
 // Physical Line("boundary@dirichlet@1e-2") = {2};
 // Physical Line("boundary@symmetry@odd1") = {2};
 // Physical Line("boundary@symmetry@odd2") = {4};
 // Physical Line("boundary@dirichlet@0") = {1,2,3,4};
+
+Mesh 2;
+Save "test-DI_Chong.msh";

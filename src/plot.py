@@ -20,8 +20,9 @@ def plot_map(
     c_mat[c_mat < boundary[0]] = boundary[0]
     c_mat[c_mat > boundary[1]] = boundary[1]
     x_raw, y_raw = vertInfoMat[:, 0], vertInfoMat[:, 1]
+
     if plot_type == PlotMapType.Scatter:
-        plt.scatter(x_raw, y_raw, c=c_mat)
+        cax = plt.scatter(x_raw, y_raw, c=c_mat)
     else:
         interp_func = LinearNDInterpolator(vertInfoMat, c_mat)
         n_x_div = 100
@@ -32,8 +33,13 @@ def plot_map(
         sample_points = np.vstack([X.flatten(), Y.flatten()]).T
         interp_value = interp_func(sample_points).reshape([n_x_div, n_y_div])
         if plot_type == PlotMapType.Coutour:
-            plt.contour(X, Y, interp_value)
+            cax = plt.contour(X, Y, interp_value)
         elif plot_type == PlotMapType.Coutourf:
-            plt.contourf(X, Y, interp_value)
-    plt.colorbar()
+            cax = plt.contourf(X, Y, interp_value)
+    if 1:
+        from matplotlib import ticker
+
+        plt.colorbar(cax, ticks=ticker.LogLocator(), format=ticker.LogFormatterSciNotation())
+    else:
+        plt.colorbar()
     plt.show()

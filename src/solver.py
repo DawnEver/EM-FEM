@@ -39,9 +39,15 @@ def solve_magnetostatic(
     miu = 0
 
     is_convergence = False
+    msg = f'S({n_vert, n_vert}) * A({n_vert}) = T({n_vert})'
+    log(msg, 'INFO')
     for i_iter in range(max_num_iter + 1):
         ### S_mat * A_mat = T_mat: prepare S_mat & T_mat
         for i_trig in range(n_trig):
+            print(f'\rPrepare equations triangles: {i_trig}/{n_trig}', end='')
+            if i_trig == n_trig - 1:
+                print('')
+
             # get x,y
             # [?]TODO calculate these coordinates once and save as matrix (Space exchange time)
             vertex_ids = trigInfoMat[i_trig]
@@ -138,7 +144,17 @@ def solve_magnetostatic(
                     matrix[np.arange(n_vertex_ids_1), vertex_ids_2] = value
                     S_mat[vertex_ids_1] = matrix
 
-        ### Solve
-        A_mat = np.linalg.solve(S_mat, T_mat)  # magnetic vector potential
+        ### Solve A_mat: magnetic vector potential
+        flag = 2
+        if flag == 0:
+            from scipy.sparse.linalg import gmres
+            from scipy.sparse import csc_matrix
+
+            S_mat = csc_matrix(S_mat)
+            A_mat = gmres(S_mat, T_mat)
+        elif flag == 1:
+            A_mat = np.linalg.solve(S_mat, T_mat)
+        else:
+            A_mat = np.linalg.inv(S_mat).dot(T_mat)
         log(f'Current iteration: {i_iter}', 'INFO')
     return S_mat, A_mat, T_mat, B_mat, Energy_mat
