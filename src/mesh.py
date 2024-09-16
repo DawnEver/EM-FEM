@@ -126,12 +126,22 @@ def read_nastran(mesh_path: str):
             }
         )
     min_error = 1e-6
-    vertex_ids_0 = np.where(vertInfoMat[:, 0] < min_error)
-    vertex_ids_1 = np.where(vertInfoMat[:, 1] < min_error)
+    ro = 0.075
+    ri = 0.0125
+    xs, ys = vertInfoMat[:, 0], vertInfoMat[:, 1]
+    vertex_ids = np.concatenate(
+        (
+            np.where(np.abs(xs**2 + ys**2 - ri**2) < min_error)[0],
+            np.where(np.abs(xs**2 + ys**2 - ro**2) < min_error)[0],
+        )
+    )
+    boundary_dirichlet_0 = {0: vertex_ids}
+    vertex_ids_0 = np.where(xs < min_error)
+    vertex_ids_1 = np.where(ys < min_error)
     boundary_sym_odd = ('odd', vertex_ids_0, vertex_ids_1)
     boundary_sym_even = ('even', None, None)
     boundary_dict = {
-        'dirichlet': {},
+        'dirichlet': boundary_dirichlet_0,
         'sym': (boundary_sym_odd, boundary_sym_even),
     }
     return trigInfoMat, trigGroupMat, vertInfoMat, group_list, boundary_dict, material_in_use_dict

@@ -150,9 +150,6 @@ def solve_magnetostatic(
         ### Solve A_mat: magnetic vector potential
         # LU decomposition/Gaussian Elimination
         # TODO Gauss-Seidel Iteration
-        if 1:
-            p = '/Users/linxu/Downloads/S-py-const_miu.csv'
-            np.savetxt(p, S_mat)
         flag = 2
         match flag:
             case 0:
