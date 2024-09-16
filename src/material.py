@@ -25,6 +25,7 @@ material_db_dict = {
             'miu_r': 1000,
         },
         'demo_steel_bh': {
+            # 'demo_steel': {
             'bh': np.array(
                 [
                     [0, 0],

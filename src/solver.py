@@ -2,6 +2,7 @@ import numpy as np
 
 from logger import log
 from material import Material_In_Use
+from utils import gauss_seidel
 
 __all__ = ['solve_magnetostatic']
 
@@ -28,21 +29,21 @@ def solve_magnetostatic(
     S_mat = np.zeros((n_vert, n_vert))
     A_mat = np.zeros(n_vert)
     T_mat = np.zeros(n_vert)
-    last_B_mat = np.zeros(n_trig)
     B_mat = np.ones(n_trig)
-    last_Energy_mat = np.ones(n_trig)
     Energy_mat = np.zeros(n_trig)
+    last_A_mat = np.ones(n_vert)
+    last_B_mat = np.zeros(n_trig)
 
     rtol_B = 1e-2  # relative error tolerance of B
-    rtol_Energy = 1e-2
+    rtol_A = 1e-2
     max_B = 2.4  # consider saturation
-    max_num_iter = 10
+    max_num_iter = 5
     reluctivity = 0
 
     is_convergence = False
     msg = f'S({n_vert, n_vert}) * A({n_vert}) = T({n_vert})'
     log(msg, 'INFO')
-    for i_iter in range(max_num_iter + 1):
+    for i_iter in range(max_num_iter):
         ### S_mat * A_mat = T_mat: prepare S_mat & T_mat
         for i_trig in range(n_trig):
             print(f'\rPrepare equations triangles: {i_trig}/{n_trig}', end='')
@@ -110,13 +111,13 @@ def solve_magnetostatic(
             )
 
         if is_convergence:
-            # last loop to update B_mat & Energy_mat
+            # last loop to update B_mat & A_mat
             break
         # current error < relative error -> exit loop
-        if np.allclose(Energy_mat, last_Energy_mat, rtol=rtol_Energy) and np.allclose(B_mat, last_B_mat, rtol=rtol_B):
+        if np.allclose(A_mat, last_A_mat, rtol=rtol_A) and np.allclose(B_mat, last_B_mat, rtol=rtol_B):
             is_convergence = True
 
-        last_Energy_mat = Energy_mat
+        last_A_mat = A_mat
         last_B_mat = B_mat
 
         ### boundary condition
@@ -150,22 +151,14 @@ def solve_magnetostatic(
         ### Solve A_mat: magnetic vector potential
         # LU decomposition/Gaussian Elimination
         # TODO Gauss-Seidel Iteration
-        flag = 2
+        flag = 1
         match flag:
             case 0:
-                from scipy.sparse.linalg import gmres
-
-                A_mat = gmres(S_mat, T_mat)
-            case 1:
-                from scipy.linalg import solve
-
-                A_mat = solve(S_mat, T_mat)
-            case 2:
                 # A_mat = np.linalg.solve(S_mat, T_mat)
                 # A_mat = np.linalg.tensorsolve(S_mat, T_mat)
                 A_mat = np.linalg.inv(S_mat).dot(T_mat)
             case _:
-                ...
+                A_mat = gauss_seidel(S_mat, T_mat, A_mat)
 
-        log(f'Current iteration: {i_iter}', 'INFO')
+        log(f'Iteration: {i_iter+1}/{max_num_iter}', 'INFO')
     return S_mat, A_mat, T_mat, B_mat, Energy_mat

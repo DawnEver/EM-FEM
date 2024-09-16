@@ -1,6 +1,6 @@
 import numpy as np
 
-__all__ = ['sum_area', 'calc_centroid']
+__all__ = ['sum_area', 'calc_centroid', 'gauss_seidel']
 
 
 def calc_centroid(vertex_mat: np.ndarray) -> np.ndarray:
@@ -46,6 +46,67 @@ def sum_area(vertex_mat: np.ndarray) -> np.number:
     vertex_mat_extended = np.concatenate((vertex_mat, np.ones((vertex_mat.shape[0], vertex_mat.shape[1], 1))), axis=2)
     # S = sum( 1/2 * det([[xi,yi,1],[xj,yj,1],[xk,yk,1]]) )
     return np.sum(np.abs(np.linalg.det(vertex_mat_extended))) / 2
+
+
+# def gauss_seidel(A, b, x0, tol=1e-4, max_iter=5):
+#     """
+#     Solve the system of linear equations using the Gauss-Seidel method.
+
+#     Parameters:
+#         A (numpy.ndarray): Coefficient matrix of shape (n, n).
+#         b (numpy.ndarray): Right-hand side vector of shape (n,).
+#         x0 (numpy.ndarray): Initial guess for the solution vector of shape (n,).
+#         tol (float): Tolerance for convergence (default: 1e-4).
+#         max_iter (int): Maximum number of iterations (default: 20).
+
+#     Returns:
+#         numpy.ndarray: Solution vector of shape (n,).
+#     """
+#     x = np.copy(x0)
+#     L = np.tril(A)
+#     U = A - L
+#     for i_iter in range(max_iter+1):
+#         print(f'\rGauss-Seidel itering: {i_iter}/{max_iter}', end='')
+#         x_new = np.linalg.solve(L, b - np.dot(U, x))
+#         error = np.linalg.norm(x_new - x)
+#         if np.linalg.norm(x_new - x) < tol:
+#             print('')
+#             return x_new
+#         x = x_new
+#     print(f'\nNot converge. Error={error}/tol')
+#     return x
+
+
+def gauss_seidel(A, b, x0, tol=1e-6, max_iter=5):
+    """
+    Solve the system of linear equations using the Gauss-Seidel method.
+
+    Parameters:
+        A (numpy.ndarray): Coefficient matrix of shape (n, n).
+        b (numpy.ndarray): Right-hand side vector of shape (n,).
+        x0 (numpy.ndarray): Initial guess for the solution vector of shape (n,).
+        tol (float): Tolerance for convergence (default: 1e-4).
+        max_iter (int): Maximum number of iterations (default: 20).
+
+    Returns:
+        numpy.ndarray: Solution vector of shape (n,).
+    """
+    n = len(b)
+    x = x0.copy()
+
+    for i_iter in range(max_iter):
+        print(f'\rGauss-Seidel itering: {i_iter+1}/{max_iter}', end='')
+        x_new = np.zeros(n)
+
+        for i in range(n):
+            x_new[i] = (b[i] - np.dot(A[i, :i], x_new[:i]) - np.dot(A[i, i + 1 :], x[i + 1 :])) / A[i, i]
+        error = np.linalg.norm(x - x_new)
+        if error < tol:
+            return x_new
+
+        x = x_new.copy()
+    print(f'\nNot converge: {error}/{tol}')
+    return x
 
 
 def _test():
