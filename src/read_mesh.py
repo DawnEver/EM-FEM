@@ -147,10 +147,7 @@ def read_nastran(mesh_path: str):
     return trigInfoMat, trigGroupMat, vertInfoMat, group_list, boundary_dict, material_in_use_dict
 
 
-def read_lipo_csv():
-    trigInfoPath = '/Users/linxu/Files/Workspace/EM-FEM/data/lipo/trigInfo.csv'
-    vertInfoPath = '/Users/linxu/Files/Workspace/EM-FEM/data/lipo/vertInfo.csv'
-
+def read_lipo_csv(trigInfoPath: str, vertInfoPath: str):
     with open(trigInfoPath, encoding='utf-8') as f:
         trigInfoMat = np.loadtxt(f, delimiter=',', dtype=np.int64)
     with open(vertInfoPath, encoding='utf-8') as f:

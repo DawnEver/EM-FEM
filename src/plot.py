@@ -11,6 +11,7 @@ class PlotMapType(Enum):
     Scatter = 'scatter'
     Coutour = 'coutour'
     Coutourf = 'coutourf'
+    Quiver = 'quiver'
 
 
 def plot_map(
@@ -21,22 +22,25 @@ def plot_map(
     c_mat[c_mat > boundary[1]] = boundary[1]
     x_raw, y_raw = vertInfoMat[:, 0], vertInfoMat[:, 1]
 
-    if plot_type == PlotMapType.Scatter:
-        cax = plt.scatter(x_raw, y_raw, c=c_mat)
-    else:
-        interp_func = LinearNDInterpolator(vertInfoMat, c_mat)
-        levels = 20
-        n_x_div = 100
-        n_y_div = 100
-        x_new = np.linspace(x_raw.min(), x_raw.max(), n_x_div)
-        y_new = np.linspace(y_raw.min(), y_raw.max(), n_y_div)
-        X, Y = np.meshgrid(x_new, y_new)
-        sample_points = np.vstack([X.flatten(), Y.flatten()]).T
-        interp_value = interp_func(sample_points).reshape([n_x_div, n_y_div])
-        if plot_type == PlotMapType.Coutour:
-            cax = plt.contour(X, Y, interp_value, levels=levels)
-        elif plot_type == PlotMapType.Coutourf:
-            cax = plt.contourf(X, Y, interp_value, levels=levels)
+    match plot_type:
+        case PlotMapType.Scatter:
+            cax = plt.scatter(x_raw, y_raw, c=c_mat)
+        case PlotMapType.Quiver:
+            cax = plt.quiver(x_raw, y_raw, c_mat[:, 0], c_mat[:, 1])
+        case _:
+            interp_func = LinearNDInterpolator(vertInfoMat, c_mat)
+            levels = 20
+            n_x_div = 100
+            n_y_div = 100
+            x_new = np.linspace(x_raw.min(), x_raw.max(), n_x_div)
+            y_new = np.linspace(y_raw.min(), y_raw.max(), n_y_div)
+            X, Y = np.meshgrid(x_new, y_new)
+            sample_points = np.vstack([X.flatten(), Y.flatten()]).T
+            interp_value = interp_func(sample_points).reshape([n_x_div, n_y_div])
+            if plot_type == PlotMapType.Coutour:
+                cax = plt.contour(X, Y, interp_value, levels=levels)
+            elif plot_type == PlotMapType.Coutourf:
+                cax = plt.contourf(X, Y, interp_value, levels=levels)
     if 0:
         from matplotlib import ticker
 

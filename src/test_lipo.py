@@ -1,3 +1,5 @@
+import os
+import re
 import numpy as np
 
 from utils import sum_area, calc_centroid
@@ -6,11 +8,20 @@ from solver import solve_magnetostatic
 from read_mesh import read_gmsh, read_lipo_csv
 from plot import plot_map, PlotMapType
 
+script_path = os.path.abspath(__file__)
+root_path = re.search(r'.*(EM-FEM)', script_path).group(0)
+data_path = os.path.join(root_path, 'data')
+
 ## Read Mesh
-if 0:
-    (trigInfoMat, trigGroupMat, vertInfoMat, group_list, boundary_dict, material_in_use_dict) = read_lipo_csv()
+if 1:
+    trigInfoPath = os.path.join(data_path, 'lipo', 'trigInfo.csv')
+    vertInfoPath = os.path.join(data_path, 'lipo', 'vertInfo.csv')
+
+    (trigInfoMat, trigGroupMat, vertInfoMat, group_list, boundary_dict, material_in_use_dict) = read_lipo_csv(
+        trigInfoPath=trigInfoPath, vertInfoPath=vertInfoPath
+    )
 else:
-    mesh_path = '/Users/linxu/Files/Workspace/EM-FEM/data/lipo/test-T_A_Lipo.msh'
+    mesh_path = os.path.join(data_path, 'lipo', 'test-T_A_Lipo.msh')
     (trigInfoMat, trigGroupMat, vertInfoMat, group_list, boundary_dict, material_in_use_dict) = read_gmsh(
         mesh_path=mesh_path
     )
@@ -29,7 +40,7 @@ for group_id, current in group_current_dict.items():
     group_current_density_list[group_id] = current / a_copper
 
 ### Solve
-S_mat, A_mat, T_mat, B_mat, Energy_mat = solve_magnetostatic(
+S_mat, A_mat, T_mat, B_mat, B_norm_mat, Energy_mat = solve_magnetostatic(
     trigInfoMat=trigInfoMat,
     trigGroupMat=trigGroupMat,
     vertInfoMat=vertInfoMat,
@@ -52,7 +63,7 @@ plot_map(
     vertInfoMat=vertInfoMat,
     c_mat=A_mat,
     boundary=(-boundary, boundary),
-    plot_type=PlotMapType.Coutourf,
+    plot_type=PlotMapType.Coutour,
 )
 plot_map(
     title='Current Density[A/m^2]',
@@ -64,10 +75,18 @@ plot_map(
 vertex_mat = vertInfoMat[trigInfoMat]
 centroid_mat = calc_centroid(vertex_mat)
 boundary = 3
+
 plot_map(
     title='Flux Density[T]',
     vertInfoMat=centroid_mat,
     c_mat=B_mat,
+    boundary=(-boundary, boundary),
+    plot_type=PlotMapType.Quiver,
+)
+plot_map(
+    title='Flux Density[T]',
+    vertInfoMat=centroid_mat,
+    c_mat=B_norm_mat,
     boundary=(-boundary, boundary),
     plot_type=PlotMapType.Coutourf,
 )

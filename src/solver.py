@@ -15,6 +15,7 @@ def solve_magnetostatic(
     group_current_density_list: list,
     material_in_use_dict: dict,
     boundary_dict: dict,
+    solve_method: int = 0,
 ):
     n_vert = len(vertInfoMat)
     n_trig = len(trigInfoMat)
@@ -29,15 +30,16 @@ def solve_magnetostatic(
     S_mat = np.zeros((n_vert, n_vert))
     A_mat = np.zeros(n_vert)
     T_mat = np.zeros(n_vert)
-    B_mat = np.ones(n_trig)
+    B_mat = np.ones((n_trig, 2))
+    B_norm_mat = np.ones(n_trig)
     Energy_mat = np.zeros(n_trig)
     last_A_mat = np.ones(n_vert)
-    last_B_mat = np.zeros(n_trig)
+    last_B_norm_mat = np.zeros(n_trig)
 
     rtol_B = 1e-2  # relative error tolerance of B
     rtol_A = 1e-2
-    max_B = 2.4  # consider saturation
-    max_num_iter = 5
+    max_B_norm = 2.4  # consider saturation
+    max_num_iter = 3
     reluctivity = 0
 
     is_convergence = False
@@ -68,21 +70,27 @@ def solve_magnetostatic(
 
             # calculate B
             [Ai, Aj, Ak] = A_mat[vertex_ids]
-            current_B = (
-                np.sqrt((bi * Ai + bj * Aj + bk * Ak) ** 2 + (ci * Ai + cj * Aj + ck * Ak) ** 2) / 2 / delta
-            )  # magnetic flux density in the
-            current_B = min(current_B, max_B)
+            current_B = np.array([bi * Ai + bj * Aj + bk * Ak, -ci * Ai - cj * Aj - ck * Ak]) / 2 / delta
+            # magnetic flux density
+
+            current_B_norm = np.linalg.norm(current_B)
+            current_B_norm = min(current_B_norm, max_B_norm)
+            if current_B_norm > max_B_norm:
+                # scaler to max_B_norm
+                scale = max_B_norm / current_B_norm
+                current_B *= scale
             B_mat[i_trig] = current_B
+            B_norm_mat[i_trig] = current_B_norm
 
             # get reluctivity of material
             group_id = int(trigGroupMat[i_trig])
             group_dict = group_list[group_id]
             material_type = group_dict['material_type']
             material_name = group_dict['material_name']
-            reluctivity = material_in_use.get_reluctivity(material_name, B=current_B)
+            reluctivity = material_in_use.get_reluctivity(material_name, B=current_B_norm)
 
             # calculate Energy
-            Energy_mat[i_trig] = current_B**2 * delta * reluctivity / 2
+            Energy_mat[i_trig] = current_B_norm**2 * delta * reluctivity / 2
 
             ## current
             if material_type == 'copper':
@@ -114,11 +122,11 @@ def solve_magnetostatic(
             # last loop to update B_mat & A_mat
             break
         # current error < relative error -> exit loop
-        if np.allclose(A_mat, last_A_mat, rtol=rtol_A) and np.allclose(B_mat, last_B_mat, rtol=rtol_B):
+        if np.allclose(A_mat, last_A_mat, rtol=rtol_A) and np.allclose(B_norm_mat, last_B_norm_mat, rtol=rtol_B):
             is_convergence = True
 
         last_A_mat = A_mat
-        last_B_mat = B_mat
+        last_B_norm_mat = B_norm_mat
 
         ### boundary condition
         # constant A
@@ -149,10 +157,9 @@ def solve_magnetostatic(
                     S_mat[vertex_ids_1] = matrix
 
         ### Solve A_mat: magnetic vector potential
-        # LU decomposition/Gaussian Elimination
-        # TODO Gauss-Seidel Iteration
-        flag = 1
-        match flag:
+        # 0 LU decomposition/Gaussian Elimination
+        # 1 Gauss-Seidel Iteration
+        match solve_method:
             case 0:
                 # A_mat = np.linalg.solve(S_mat, T_mat)
                 # A_mat = np.linalg.tensorsolve(S_mat, T_mat)
@@ -161,4 +168,4 @@ def solve_magnetostatic(
                 A_mat = gauss_seidel(S_mat, T_mat, A_mat)
 
         log(f'Iteration: {i_iter+1}/{max_num_iter}', 'INFO')
-    return S_mat, A_mat, T_mat, B_mat, Energy_mat
+    return S_mat, A_mat, T_mat, B_mat, B_norm_mat, Energy_mat

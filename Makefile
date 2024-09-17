@@ -10,11 +10,6 @@ fmt:
 	ruff check src --fix
 	ruff format src
 
-
-.PHONY: mypy
-mypy:
-	mypy hi_motor_designer
-
 .PHONY: test
 test:
 	coverage run -m unittest discover
@@ -22,7 +17,7 @@ test:
 	open htmlcov/index.html
 
 .PHONY: all
-all: lint mypy test
+all: lint test
 
 .PHONY: clean
 clean:

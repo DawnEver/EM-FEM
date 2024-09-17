@@ -1,3 +1,6 @@
+import os
+import re
+
 import numpy as np
 from plot import plot_map, PlotMapType
 
@@ -6,11 +9,18 @@ from logger import log
 from solver import solve_magnetostatic
 from read_mesh import read_nastran
 
+script_path = os.path.abspath(__file__)
+root_path = re.search(r'.*(EM-FEM)', script_path).group(0)
+data_path = os.path.join(root_path, 'data')
+
 ## Read Mesh
 if 1:
-    mesh_path = '/Users/linxu/Files/Workspace/EM-FEM/data/extraFine/synrm_extrafine.nas'
+    mesh_path = os.path.join(data_path, 'extraFine', 'synrm_extrafine.nas')
+    solve_method = 1  # 1 iteration method
 else:
-    mesh_path = '/Users/linxu/Files/Workspace/EM-FEM/data/coarse/synrm_coarse.nas'
+    mesh_path = os.path.join(data_path, 'coarse', 'synrm_coarse.nas')
+    solve_method = 0  # 0 classical method
+
 trigInfoMat, trigGroupMat, vertInfoMat, group_list, boundary_dict, material_in_use_dict = read_nastran(
     mesh_path=mesh_path
 )
@@ -37,7 +47,7 @@ for group_id, current in group_current_dict.items():
     group_current_density_list[group_id] = current / a_copper
 
 ### Solve
-S_mat, A_mat, T_mat, B_mat, Energy_mat = solve_magnetostatic(
+S_mat, A_mat, T_mat, B_mat, B_norm_mat, Energy_mat = solve_magnetostatic(
     trigInfoMat=trigInfoMat,
     trigGroupMat=trigGroupMat,
     vertInfoMat=vertInfoMat,
@@ -45,18 +55,17 @@ S_mat, A_mat, T_mat, B_mat, Energy_mat = solve_magnetostatic(
     group_current_density_list=group_current_density_list,
     boundary_dict=boundary_dict,
     material_in_use_dict=material_in_use_dict,
+    solve_method=solve_method,
 )
 
 ### Post Process
-
 total_Energy = sum(Energy_mat)
 total_flux = max(A_mat)
 msg = f'Total Energy: {total_Energy}; Total Flux: {total_flux}'
 log(msg, 'INFO')
 
-
-# Plot
-boundary = 1e20
+### Plot
+boundary = 1e10
 plot_map(
     title='Magnetic Vector Potential[Wb/m]',
     vertInfoMat=vertInfoMat,
@@ -73,13 +82,23 @@ plot_map(
 )
 vertex_mat = vertInfoMat[trigInfoMat]
 centroid_mat = calc_centroid(vertex_mat)
+boundary = 3
+
 plot_map(
     title='Flux Density[T]',
     vertInfoMat=centroid_mat,
     c_mat=B_mat,
     boundary=(-boundary, boundary),
+    plot_type=PlotMapType.Quiver,
+)
+plot_map(
+    title='Flux Density[T]',
+    vertInfoMat=centroid_mat,
+    c_mat=B_norm_mat,
+    boundary=(-boundary, boundary),
     plot_type=PlotMapType.Coutourf,
 )
+boundary = 1e5
 plot_map(
     title='Energy[W]',
     vertInfoMat=centroid_mat,

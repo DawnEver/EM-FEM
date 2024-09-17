@@ -48,35 +48,6 @@ def sum_area(vertex_mat: np.ndarray) -> np.number:
     return np.sum(np.abs(np.linalg.det(vertex_mat_extended))) / 2
 
 
-# def gauss_seidel(A, b, x0, tol=1e-4, max_iter=5):
-#     """
-#     Solve the system of linear equations using the Gauss-Seidel method.
-
-#     Parameters:
-#         A (numpy.ndarray): Coefficient matrix of shape (n, n).
-#         b (numpy.ndarray): Right-hand side vector of shape (n,).
-#         x0 (numpy.ndarray): Initial guess for the solution vector of shape (n,).
-#         tol (float): Tolerance for convergence (default: 1e-4).
-#         max_iter (int): Maximum number of iterations (default: 20).
-
-#     Returns:
-#         numpy.ndarray: Solution vector of shape (n,).
-#     """
-#     x = np.copy(x0)
-#     L = np.tril(A)
-#     U = A - L
-#     for i_iter in range(max_iter+1):
-#         print(f'\rGauss-Seidel itering: {i_iter}/{max_iter}', end='')
-#         x_new = np.linalg.solve(L, b - np.dot(U, x))
-#         error = np.linalg.norm(x_new - x)
-#         if np.linalg.norm(x_new - x) < tol:
-#             print('')
-#             return x_new
-#         x = x_new
-#     print(f'\nNot converge. Error={error}/tol')
-#     return x
-
-
 def gauss_seidel(A, b, x0, tol=1e-6, max_iter=5):
     """
     Solve the system of linear equations using the Gauss-Seidel method.
