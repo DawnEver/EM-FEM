@@ -25,6 +25,7 @@ else:
     (trigInfoMat, trigGroupMat, vertInfoMat, group_list, boundary_dict, material_in_use_dict) = read_gmsh(
         mesh_path=mesh_path
     )
+solve_method = 0
 
 ## current -> current density
 group_current_dict = {
@@ -48,6 +49,8 @@ S_mat, A_mat, T_mat, B_mat, B_norm_mat, Energy_mat = solve_magnetostatic(
     group_current_density_list=group_current_density_list,
     boundary_dict=boundary_dict,
     material_in_use_dict=material_in_use_dict,
+    depth=1,
+    solve_method=solve_method,
 )
 
 ### Post Process

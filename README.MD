@@ -47,9 +47,15 @@ pre-commit install .
 
 ## TODO
 - rewrite solver with high performance programming language(C++ or Rust).
+- Assign proper initial value with interpolation functions to accelerate convergence.
 - time step simulation & external circuit excitation
 - PM materials
 - parametric modelling of several classical electric machines
+- post processing like loss calculation(Steinmetz model), torque(Maxwell stress tensor method)
+    - loss calculation methods
+        - calculate with maximum flux density(quick but coarse)
+        - calculate with the amplitude of each harmonic flux density(more precise)
 
 ## Ref
 - [T. A. Lipo, Introduction to AC machine design. in IEEE Press series on power engineering. Hoboken, New Jersey: IEEE Press/Wiley, 2017.](https://onlinelibrary.wiley.com/doi/book/10.1002/9781119352181)
+- [Gitbook Numerical Analysis Implementations in Python](https://laus-organization.gitbook.io/numerical-analysis-implementations-in-python/)

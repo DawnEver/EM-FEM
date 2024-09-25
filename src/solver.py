@@ -2,7 +2,7 @@ import numpy as np
 
 from logger import log
 from material import Material_In_Use
-from utils import gauss_seidel
+from utils import gauss_seidel_sor, jacobi_iteration
 
 __all__ = ['solve_magnetostatic']
 
@@ -16,6 +16,7 @@ def solve_magnetostatic(
     material_in_use_dict: dict,
     boundary_dict: dict,
     solve_method: int = 0,
+    depth: float = 0.005,
 ):
     n_vert = len(vertInfoMat)
     n_trig = len(trigInfoMat)
@@ -90,7 +91,7 @@ def solve_magnetostatic(
             reluctivity = material_in_use.get_reluctivity(material_name, B=current_B_norm)
 
             # calculate Energy
-            Energy_mat[i_trig] = current_B_norm**2 * delta * reluctivity / 2
+            Energy_mat[i_trig] = current_B_norm**2 * delta * depth * reluctivity / 2
 
             ## current
             if material_type == 'copper':
@@ -157,15 +158,19 @@ def solve_magnetostatic(
                     S_mat[vertex_ids_1] = matrix
 
         ### Solve A_mat: magnetic vector potential
-        # 0 LU decomposition/Gaussian Elimination
+        # 0 LU/Cholesky decomposition
         # 1 Gauss-Seidel Iteration
+        # 2 Jacobi Iteration
         match solve_method:
             case 0:
                 # A_mat = np.linalg.solve(S_mat, T_mat)
                 # A_mat = np.linalg.tensorsolve(S_mat, T_mat)
                 A_mat = np.linalg.inv(S_mat).dot(T_mat)
+            case 1:
+                omega = 0.5
+                A_mat = gauss_seidel_sor(S_mat, T_mat, A_mat, omega)
             case _:
-                A_mat = gauss_seidel(S_mat, T_mat, A_mat)
+                A_mat = jacobi_iteration(S_mat, T_mat, A_mat)
 
         log(f'Iteration: {i_iter+1}/{max_num_iter}', 'INFO')
     return S_mat, A_mat, T_mat, B_mat, B_norm_mat, Energy_mat

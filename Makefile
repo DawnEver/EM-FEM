@@ -2,13 +2,13 @@
 
 .PHONY: lint
 lint:
-	ruff check src
-	ruff format --check src
+	.venv/bin/ruff check src
+	.venv/bin/ruff format --check src
 
 .PHONY: fmt
 fmt:
-	ruff check src --fix
-	ruff format src
+	.venv/bin/ruff check src --fix
+	.venv/bin/ruff format src
 
 .PHONY: test
 test:

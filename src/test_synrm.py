@@ -14,12 +14,15 @@ root_path = re.search(r'.*(EM-FEM)', script_path).group(0)
 data_path = os.path.join(root_path, 'data')
 
 ## Read Mesh
-if 1:
+if 0:
     mesh_path = os.path.join(data_path, 'extraFine', 'synrm_extrafine.nas')
-    solve_method = 1  # 1 iteration method
+    solve_method = 0
+    # 0 classical method
+    # 1 gauss_seidel iteration
+    # 2 jacobi iteration
 else:
     mesh_path = os.path.join(data_path, 'coarse', 'synrm_coarse.nas')
-    solve_method = 0  # 0 classical method
+    solve_method = 0
 
 trigInfoMat, trigGroupMat, vertInfoMat, group_list, boundary_dict, material_in_use_dict = read_nastran(
     mesh_path=mesh_path
@@ -56,6 +59,7 @@ S_mat, A_mat, T_mat, B_mat, B_norm_mat, Energy_mat = solve_magnetostatic(
     boundary_dict=boundary_dict,
     material_in_use_dict=material_in_use_dict,
     solve_method=solve_method,
+    depth=0.0375,
 )
 
 ### Post Process

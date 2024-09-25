@@ -1,7 +1,13 @@
 # Test Case: Simple Iron-cored Inductor with an Air Gap
 Refer to [test_lipo.py](../src/test_lipo.py)
 
-<img src='./test_lipo/inductor_model.jpg' width=50%>
+
+<table>
+    <tr>
+      <th><img src='./test_lipo/inductor_model_lipo.jpg' height=300pt><br/>Mesh in Lipo's book.</th>
+      <th><img src='./test_lipo/inductor_model_gmsh.png' height=300pt><br/>Mesh in Gmsh</th>
+    </tr>
+</table>
 
 Starting from a simple iron-cored inductor with an air gap discussed in *[Introduction to AC machine design]((https://onlinelibrary.wiley.com/doi/book/10.1002/9781119352181))*, T. A. Lipo provides example code in the appendix. (Refer to [Lipo.m](./test_lipo/Lipo.m))
 
@@ -22,13 +28,13 @@ Then I compared the FEA results of Lipo's code and my code with the same mesh(Li
 | | Lipo's Code | Lipo's Mesh + My code | Gmsh Mesh + My code |
 |--|--|--|--|
 | Total Flux(Wb/m) | 0.0149 | 0.014908  | 0.014290 |
-| Total Energy(W) | 28.1353 | 28.1353  | 27.0102 |
+| Total Energy(J) | 28.1353 | 28.1353  | 27.0102 |
 | Num. of Vertex | 1428 | 1428  | 6466 |
 
 <table>
     <tr>
       <th><img src='./test_lipo/A-lipo.jpg' height=300pt><br/>Magnetic vector potential plot of Lipo's Code</th>
-      <th><img src='./test_lipo/A-py-coutour.png' height=300pt><br/>Magnetic vector potential plot of my Code</th>
+      <th><img src='./test_lipo/A-py-coutour-coarse.png' height=300pt><br/>Magnetic vector potential plot of my Code</th>
     </tr>
 </table>
 

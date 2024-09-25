@@ -35,7 +35,9 @@ The reluctivity matrix $[S]$ is calculated with reluctivity and the geometric ch
 The current matrix $[T]$ is obtained by simply taking 1/3 the sum of the currents passing through the triangles.
 More details can be found in *chapter 10, [Introduction to AC machine design]((https://onlinelibrary.wiley.com/doi/book/10.1002/9781119352181))*.
 
-The magnetic vector potential matrix $[A]$ can be solved by gaussian elimination(more precise but slower) and gauss-seidel iteration(large quantity of equations).
+The magnetic vector potential matrix $[A]$ can be solved by direct method(more precise but slower) and gauss-seidel iteration(large quantity of equations).
+
+The NumPy package in Python offers a direct solving method for linear equations. To understand how it works, we can trace down its implementation. NumPy utilizes LAPACK (Linear Algebra Package), which is written in Fortran, to solve linear equations using LU decomposition(Cholesky decomposition for positive definite matrix), forward substitution, and backward substitution.
 
 Besides, nonlinear material can provide different reluctivity at each epoch. After a certain number of iterations, $[A]$ will eventually converge below the required error.
 
