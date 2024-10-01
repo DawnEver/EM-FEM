@@ -17,9 +17,6 @@ data_path = os.path.join(root_path, 'data')
 if 0:
     mesh_path = os.path.join(data_path, 'extraFine', 'synrm_extrafine.nas')
     solve_method = 0
-    # 0 classical method
-    # 1 gauss_seidel iteration
-    # 2 jacobi iteration
 else:
     mesh_path = os.path.join(data_path, 'coarse', 'synrm_coarse.nas')
     solve_method = 0

@@ -1,8 +1,8 @@
 import numpy as np
+from scipy.sparse import coo_matrix, linalg as sp_linalg
 
 from logger import log
 from material import Material_In_Use
-from utils import gauss_seidel_sor, jacobi_iteration
 
 __all__ = ['solve_magnetostatic']
 
@@ -28,9 +28,7 @@ def solve_magnetostatic(
     material_in_use = Material_In_Use(material_in_use_dict)
 
     ### loop
-    S_mat = np.zeros((n_vert, n_vert))
     A_mat = np.zeros(n_vert)
-    T_mat = np.zeros(n_vert)
     B_mat = np.ones((n_trig, 2))
     B_norm_mat = np.ones(n_trig)
     Energy_mat = np.zeros(n_trig)
@@ -47,6 +45,11 @@ def solve_magnetostatic(
     msg = f'S({n_vert, n_vert}) * A({n_vert}) = T({n_vert})'
     log(msg, 'INFO')
     for i_iter in range(max_num_iter):
+        n_val = n_trig * 9
+        T_mat = np.zeros(n_vert)
+        S_row_mat = np.zeros(n_val, dtype=int)
+        S_col_mat = np.zeros(n_val, dtype=int)
+        S_val_mat = np.zeros(n_val)
         ### S_mat * A_mat = T_mat: prepare S_mat & T_mat
         for i_trig in range(n_trig):
             print(f'\rPrepare equations triangles: {i_trig}/{n_trig}', end='')
@@ -106,18 +109,16 @@ def solve_magnetostatic(
             Sjk_raw = Skj_raw = bj * bk + cj * ck
             Sik_raw = Ski_raw = bi * bk + ci * ck
 
-            S_mat[np.ix_(vertex_ids, vertex_ids)] += (
-                np.array(
-                    [
-                        [Sii_raw, Sij_raw, Sik_raw],
-                        [Sji_raw, Sjj_raw, Sjk_raw],
-                        [Ski_raw, Skj_raw, Skk_raw],
-                    ]
-                )
-                * reluctivity
+            start_id = 9 * i_trig
+            end_id = start_id + 9
+            S_val_mat[start_id:end_id] = (
+                reluctivity
                 / 4
                 / delta
+                * np.array([Sii_raw, Sij_raw, Sik_raw, Sji_raw, Sjj_raw, Sjk_raw, Ski_raw, Skj_raw, Skk_raw])
             )
+            S_row_mat[start_id:end_id] = np.repeat(vertex_ids, 3)
+            S_col_mat[start_id:end_id] = np.tile(vertex_ids, 3)
 
         if is_convergence:
             # last loop to update B_mat & A_mat
@@ -131,46 +132,54 @@ def solve_magnetostatic(
 
         ### boundary condition
         # constant A
-        for A_const, vertex_ids in boundary_dirichlet.items():
+        for A_const, _vertex_ids in boundary_dirichlet.items():
+            vertex_ids = np.unique(_vertex_ids)
             n_vertex_ids = len(vertex_ids)
             if n_vertex_ids < 1:
                 continue
             T_mat[vertex_ids] = 3 * A_const
-            matrix = np.zeros((n_vertex_ids, n_vert))
-            matrix[np.arange(n_vertex_ids), vertex_ids] = 1
-            S_mat[vertex_ids] = matrix
+
+            # set 0
+            S_row_ids = np.where(np.isin(S_row_mat, vertex_ids))
+            S_val_mat[S_row_ids] = 0
+            # set 1
+            S_row_mat = np.concatenate((S_row_mat, vertex_ids))
+            S_col_mat = np.concatenate((S_col_mat, vertex_ids))
+            S_val_mat = np.concatenate((S_val_mat, np.ones(n_vertex_ids)))
 
         # symmetry boundary odd/even
         for boundary_sym_i in boundary_sym:
             tag, vertex_ids_1, vertex_ids_2 = boundary_sym_i
             if vertex_ids_1 is not None and vertex_ids_2 is not None:
+                vertex_ids_1 = np.unique(vertex_ids_1)
+                vertex_ids_2 = np.unique(vertex_ids_2)
                 n_vertex_ids_1 = len(vertex_ids_1)
                 n_vertex_ids_2 = len(vertex_ids_2)
-                if n_vertex_ids_1 > 1 and n_vertex_ids_1 != n_vertex_ids_2:
+                if n_vertex_ids_1 > 1 and n_vertex_ids_1 == n_vertex_ids_2:
+                    vertex_ids = np.concatenate((vertex_ids_1, vertex_ids_2))
                     T_mat[vertex_ids] = 0
-                    matrix = np.zeros((n_vertex_ids_1, n_vert))
-                    matrix[np.arange(n_vertex_ids_1), vertex_ids_1] = 1
+                    # set 0
+                    S_row_ids = np.where(np.isin(S_row_mat, vertex_ids))
+                    S_val_mat[S_row_ids] = 0
+                    S_row_mat = np.concatenate((S_row_mat, vertex_ids))
+                    S_col_mat = np.concatenate((S_col_mat, vertex_ids))
                     if tag == 'odd':
                         value = 1
                     else:
                         value = -1
-                    matrix[np.arange(n_vertex_ids_1), vertex_ids_2] = value
-                    S_mat[vertex_ids_1] = matrix
+                    S_val_mat = np.concatenate((S_val_mat, np.ones(n_vertex_ids_1), np.full(n_vertex_ids_2, value)))
+                else:
+                    msg = f'{tag} symmetry boundary conditions.\
+                    len(vertex_ids_1)={n_vertex_ids_1} len(vertex_ids_2)={n_vertex_ids_2}'
+                    log(msg=msg, level='ERROR')
 
         ### Solve A_mat: magnetic vector potential
-        # 0 LU/Cholesky decomposition
-        # 1 Gauss-Seidel Iteration
-        # 2 Jacobi Iteration
-        match solve_method:
-            case 0:
-                # A_mat = np.linalg.solve(S_mat, T_mat)
-                # A_mat = np.linalg.tensorsolve(S_mat, T_mat)
-                A_mat = np.linalg.inv(S_mat).dot(T_mat)
-            case 1:
-                omega = 0.5
-                A_mat = gauss_seidel_sor(S_mat, T_mat, A_mat, omega)
-            case _:
-                A_mat = jacobi_iteration(S_mat, T_mat, A_mat)
+        # https://www.osgeo.cn/scipy/reference/sparse.linalg.html#
+
+        S_sp_mat = coo_matrix((S_val_mat, (S_row_mat, S_col_mat)), shape=(n_vert, n_vert))
+        A_mat, _ = sp_linalg.cg(S_sp_mat, T_mat)
 
         log(f'Iteration: {i_iter+1}/{max_num_iter}', 'INFO')
+
+    S_mat = S_sp_mat.toarray()
     return S_mat, A_mat, T_mat, B_mat, B_norm_mat, Energy_mat

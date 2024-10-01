@@ -13,7 +13,8 @@ root_path = re.search(r'.*(EM-FEM)', script_path).group(0)
 data_path = os.path.join(root_path, 'data')
 
 ## Read Mesh
-if 1:
+FLAG_Lipo = True
+if FLAG_Lipo:
     trigInfoPath = os.path.join(data_path, 'lipo', 'trigInfo.csv')
     vertInfoPath = os.path.join(data_path, 'lipo', 'vertInfo.csv')
 
@@ -60,44 +61,60 @@ msg = f'Total Energy: {total_Energy}; Total Flux: {total_flux}'
 log(msg, 'INFO')
 
 ### Plot
-boundary = 1e10
-plot_map(
-    title='Magnetic Vector Potential[Wb/m]',
-    vertInfoMat=vertInfoMat,
-    c_mat=A_mat,
-    boundary=(-boundary, boundary),
-    plot_type=PlotMapType.Coutour,
-)
-plot_map(
-    title='Current Density[A/m^2]',
-    vertInfoMat=vertInfoMat,
-    c_mat=T_mat,
-    boundary=(-boundary, boundary),
-    plot_type=PlotMapType.Coutourf,
-)
-vertex_mat = vertInfoMat[trigInfoMat]
-centroid_mat = calc_centroid(vertex_mat)
-boundary = 3
+if 0:
+    plot_map(
+        title='Magnetic Vector Potential[Wb/m]',
+        vertInfoMat=vertInfoMat,
+        c_mat=A_mat,
+        plot_type=PlotMapType.Coutour,
+    )
+    plot_map(
+        title='Current Density[A/m^2]',
+        vertInfoMat=vertInfoMat,
+        c_mat=T_mat,
+        plot_type=PlotMapType.Coutourf,
+    )
+    vertex_mat = vertInfoMat[trigInfoMat]
+    centroid_mat = calc_centroid(vertex_mat)
 
-plot_map(
-    title='Flux Density[T]',
-    vertInfoMat=centroid_mat,
-    c_mat=B_mat,
-    boundary=(-boundary, boundary),
-    plot_type=PlotMapType.Quiver,
-)
-plot_map(
-    title='Flux Density[T]',
-    vertInfoMat=centroid_mat,
-    c_mat=B_norm_mat,
-    boundary=(-boundary, boundary),
-    plot_type=PlotMapType.Coutourf,
-)
-boundary = 1e5
-plot_map(
-    title='Energy[W]',
-    vertInfoMat=centroid_mat,
-    c_mat=Energy_mat,
-    boundary=(-boundary, boundary),
-    plot_type=PlotMapType.Coutourf,
-)
+    plot_map(
+        title='Flux Density[T]',
+        vertInfoMat=centroid_mat,
+        c_mat=B_mat,
+        plot_type=PlotMapType.Quiver,
+    )
+    plot_map(
+        title='Flux Density[T]',
+        vertInfoMat=centroid_mat,
+        c_mat=B_norm_mat,
+        plot_type=PlotMapType.Coutourf,
+    )
+    plot_map(
+        title='Energy[W]',
+        vertInfoMat=centroid_mat,
+        c_mat=Energy_mat,
+        plot_type=PlotMapType.Coutourf,
+    )
+if 0 and FLAG_Lipo:
+    file_path = os.path.join(root_path, 'mat-diff', 'data', 'A-matlab.csv')
+    with open(file_path, encoding='utf-8') as f:
+        A_mat_matlab = np.loadtxt(f)
+    diff_A_mat = A_mat - A_mat_matlab
+    plot_map(
+        title="Error of Magnetic Vector Potential\nbetween Lipo's and my Code[Wb/m]",
+        vertInfoMat=vertInfoMat,
+        c_mat=diff_A_mat,
+        plot_type=PlotMapType.Coutourf,
+    )
+    plot_map(
+        title='Magnetic Vector Potential[Wb/m]',
+        vertInfoMat=vertInfoMat,
+        c_mat=A_mat_matlab,
+        plot_type=PlotMapType.Coutourf,
+    )
+    plot_map(
+        title='Magnetic Vector Potential[Wb/m]',
+        vertInfoMat=vertInfoMat,
+        c_mat=A_mat,
+        plot_type=PlotMapType.Coutourf,
+    )

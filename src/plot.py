@@ -15,7 +15,11 @@ class PlotMapType(Enum):
 
 
 def plot_map(
-    title: str, vertInfoMat: np.ndarray, c_mat: np.ndarray, boundary, plot_type: PlotMapType = PlotMapType.Scatter
+    title: str,
+    vertInfoMat: np.ndarray,
+    c_mat: np.ndarray,
+    boundary=(-np.inf, np.inf),
+    plot_type: PlotMapType = PlotMapType.Scatter,
 ):
     plt.title(title)
     c_mat[c_mat < boundary[0]] = boundary[0]

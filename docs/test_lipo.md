@@ -31,6 +31,8 @@ Then I compared the FEA results of Lipo's code and my code with the same mesh(Li
 | Total Energy(J) | 28.1353 | 28.1353  | 27.0102 |
 | Num. of Vertex | 1428 | 1428  | 6466 |
 
+<img src='./test_lipo/A-error_plot.jpg' height=300pt>
+
 <table>
     <tr>
       <th><img src='./test_lipo/A-lipo.jpg' height=300pt><br/>Magnetic vector potential plot of Lipo's Code</th>

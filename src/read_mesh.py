@@ -136,8 +136,8 @@ def read_nastran(mesh_path: str):
         )
     )
     boundary_dirichlet_0 = {0: vertex_ids}
-    vertex_ids_0 = np.where(xs < min_error)
-    vertex_ids_1 = np.where(ys < min_error)
+    vertex_ids_0 = np.where(xs < min_error)[0]
+    vertex_ids_1 = np.where(ys < min_error)[0]
     boundary_sym_odd = ('odd', vertex_ids_0, vertex_ids_1)
     boundary_sym_even = ('even', None, None)
     boundary_dict = {
