@@ -18,7 +18,7 @@ gmsh
 gmsh <path/to/file.geo>
 ```
 3. Define current excitation, solve and plot in python script. Below are 2 test cases:
-- [test_lipo.py](./src/test_lipo.py) Test case of a simple iron-cored inductor with an air gap.
+- [test_inductor.py](./src/test_inductor.py) Test case of a simple iron-cored inductor with an air gap.
     - coarse mesh same as Lipo's example(.csv)
     - extra fine mesh generated with gmsh(.msh)
 - [test_synrm.py](./src/test_synrm.py) Test case of a synchronous reluctance machine.
@@ -27,7 +27,7 @@ gmsh <path/to/file.geo>
 
 ## Docs
 - [docs](./docs/index.md)
-- [test case 1](./docs/test_lipo.md)
+- [test case 1](./docs/test_inductor.md)
 - [test case 2](./docs/test_synrm.md)
 
 ## Dev

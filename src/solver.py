@@ -37,7 +37,7 @@ def solve_magnetostatic(
 
     rtol_B = 1e-2  # relative error tolerance of B
     rtol_A = 1e-2
-    max_B_norm = 2.4  # consider saturation
+    max_B_norm = 20  # 2.4  # consider saturation
     max_num_iter = 3
     reluctivity = 0
 

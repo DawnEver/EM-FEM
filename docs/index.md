@@ -52,5 +52,5 @@ Interpolation also used to generate smoother counter plots.
 
 
 ## Test Cases
-- [Simple Iron-cored Inductor with an Air Gap](./test_lipo.md)
+- [Simple Iron-cored Inductor with an Air Gap](./test_inductor.md)
 - [A Synchronous Reluctance Machine](./test_synrm.md)

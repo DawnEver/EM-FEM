@@ -71,7 +71,7 @@ Plane Surface(4) = {4};
 
 // physical surface
 Physical Surface("group@s1@steel@demo_steel") = {1,2};
-Color blue {Surface{1,2};}
+Color Blue {Surface{1,2};}
 Physical Surface("group@a1@other@air") = {3};
 Color Red {Surface{3};}
 Physical Surface("group@c1@copper@cu") = {4};

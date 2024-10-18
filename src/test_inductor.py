@@ -13,7 +13,7 @@ root_path = re.search(r'.*(EM-FEM)', script_path).group(0)
 data_path = os.path.join(root_path, 'data')
 
 ## Read Mesh
-FLAG_Lipo = True
+FLAG_Lipo = False
 if FLAG_Lipo:
     trigInfoPath = os.path.join(data_path, 'lipo', 'trigInfo.csv')
     vertInfoPath = os.path.join(data_path, 'lipo', 'vertInfo.csv')
@@ -41,6 +41,9 @@ for group_id, current in group_current_dict.items():
     a_copper = sum_area(vertex_mat)  # sum the area of all triangles
     group_current_density_list[group_id] = current / a_copper
 
+if 1:
+    np.save(os.path.join(data_path, 'lipo', 'vertInfoMat_inductor.npy'), vertInfoMat)
+
 ### Solve
 S_mat, A_mat, T_mat, B_mat, B_norm_mat, Energy_mat = solve_magnetostatic(
     trigInfoMat=trigInfoMat,
@@ -55,8 +58,8 @@ S_mat, A_mat, T_mat, B_mat, B_norm_mat, Energy_mat = solve_magnetostatic(
 )
 
 ### Post Process
-total_Energy = sum(Energy_mat)
-total_flux = max(A_mat)
+total_Energy = np.sum(Energy_mat)
+total_flux = np.max(np.abs(A_mat))
 msg = f'Total Energy: {total_Energy}; Total Flux: {total_flux}'
 log(msg, 'INFO')
 
@@ -95,25 +98,48 @@ if 0:
         c_mat=Energy_mat,
         plot_type=PlotMapType.Coutourf,
     )
-if 0 and FLAG_Lipo:
+if 1 and FLAG_Lipo:
     file_path = os.path.join(root_path, 'mat-diff', 'data', 'A-matlab.csv')
     with open(file_path, encoding='utf-8') as f:
         A_mat_matlab = np.loadtxt(f)
     diff_A_mat = A_mat - A_mat_matlab
     plot_map(
-        title="Error of Magnetic Vector Potential\nbetween Lipo's and my Code[Wb/m]",
+        title="Error of Magnetic Vector Potential\nbetween Lipo's and My Python Code[Wb/m]",
         vertInfoMat=vertInfoMat,
         c_mat=diff_A_mat,
         plot_type=PlotMapType.Coutourf,
     )
     plot_map(
-        title='Magnetic Vector Potential[Wb/m]',
+        title="Magnetic Vector Potential[Wb/m](Lipo's Code)",
         vertInfoMat=vertInfoMat,
         c_mat=A_mat_matlab,
         plot_type=PlotMapType.Coutourf,
     )
     plot_map(
-        title='Magnetic Vector Potential[Wb/m]',
+        title='Magnetic Vector Potential[Wb/m](My Python Code)',
+        vertInfoMat=vertInfoMat,
+        c_mat=A_mat,
+        plot_type=PlotMapType.Coutourf,
+    )
+elif 1 and not FLAG_Lipo:
+    file_path = os.path.join(data_path, 'lipo', 'A_mat_inductor.npy')
+    A_mat_femm = np.load(file_path)
+    print(max(A_mat_femm))
+    diff_A_mat = A_mat - A_mat_femm
+    plot_map(
+        title='Error of Magnetic Vector Potential\nbetween FEMM and My Pyhton Code[Wb/m]',
+        vertInfoMat=vertInfoMat,
+        c_mat=diff_A_mat,
+        plot_type=PlotMapType.Coutourf,
+    )
+    plot_map(
+        title='Magnetic Vector Potential[Wb/m](FEMM)',
+        vertInfoMat=vertInfoMat,
+        c_mat=A_mat_femm,
+        plot_type=PlotMapType.Coutourf,
+    )
+    plot_map(
+        title='Magnetic Vector Potential[Wb/m](My Python Code)',
         vertInfoMat=vertInfoMat,
         c_mat=A_mat,
         plot_type=PlotMapType.Coutourf,
