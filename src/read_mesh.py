@@ -35,14 +35,16 @@ def read_gmsh(mesh_path: str):
                 vert_ids = np.unique(lineInfoMat[line_ids])
                 boundary_dirichlet[float(boundary_id)] = vert_ids
             elif boundary_type == 'symmetry':
+                lineInfoMat = mesh.cells_dict['line']
+                vert_ids = np.unique(lineInfoMat[line_ids])
                 if boundary_id == 'odd1':
-                    boundary_sym_odd_1 = line_ids
+                    boundary_sym_odd_1 = vert_ids
                 elif boundary_id == 'odd2':
-                    boundary_sym_odd_2 = line_ids
+                    boundary_sym_odd_2 = vert_ids
                 if boundary_id == 'even1':
-                    boundary_sym_even_1 = line_ids
+                    boundary_sym_even_1 = vert_ids
                 elif boundary_id == 'even2':
-                    boundary_sym_even_2 = line_ids
+                    boundary_sym_even_2 = vert_ids
                 else:
                     ...
             else:

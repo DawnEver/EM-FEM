@@ -68,7 +68,7 @@ Below are some other plots obtained from my python code:
       <th><img src='./test_inductor/B_norm-py.png' height=300pt><br/>FLux density</th>
     </tr>
     <tr>
-      <th><img src='./test_inductor/J-py.png' height=300pt><br/>Current density</th>
+      <th><img src='./test_inductor/J-py.png' height=300pt><br/>Matrix T</th>
       <th><img src='./test_inductor/Energy-py.png' height=300pt><br/>Energy</th>
     </tr>
 </table>

@@ -89,6 +89,8 @@ lint.ignore = [
     "PLR0913",
     # Too many branches ( > 12)
     "PLR0912",
+    # Magic number
+    "PLR2004",
 ]
 lint.flake8-quotes = {inline-quotes = "single", multiline-quotes = "double"}
 format.quote-style="single"

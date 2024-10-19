@@ -15,7 +15,6 @@ def solve_magnetostatic(
     group_current_density_list: list,
     material_in_use_dict: dict,
     boundary_dict: dict,
-    solve_method: int = 0,
     depth: float = 0.005,
 ):
     n_vert = len(vertInfoMat)
@@ -37,7 +36,7 @@ def solve_magnetostatic(
 
     rtol_B = 1e-2  # relative error tolerance of B
     rtol_A = 1e-2
-    max_B_norm = 20  # 2.4  # consider saturation
+    max_B_norm = 1e5  # 2.4  # consider saturation
     max_num_iter = 3
     reluctivity = 0
 
@@ -52,7 +51,7 @@ def solve_magnetostatic(
         S_val_mat = np.zeros(n_val)
         ### S_mat * A_mat = T_mat: prepare S_mat & T_mat
         for i_trig in range(n_trig):
-            print(f'\rPrepare equations triangles: {i_trig}/{n_trig}', end='')
+            print(f'\rPrepare equations triangles: {i_trig+1}/{n_trig}', end='')
             if i_trig == n_trig - 1:
                 print('')
 

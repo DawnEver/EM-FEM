@@ -44,7 +44,7 @@ Work is still ongoing.
       <th><img src='./test_synrm/fine-Energy.png' height=300pt><br/>Energy(Fine)</th>
     </tr>
     <tr>
-      <th><img src='./test_synrm/coarse-J.png' height=300pt><br/>Current density(Coarse)</th>
-      <th><img src='./test_synrm/fine-J.png' height=300pt><br/>Current density(Fine)</th>
+      <th><img src='./test_synrm/coarse-J.png' height=300pt><br/>Matrix T(Coarse)</th>
+      <th><img src='./test_synrm/fine-J.png' height=300pt><br/>Matrix T(Fine)</th>
     </tr>
 </table>
