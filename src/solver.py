@@ -36,7 +36,7 @@ def solve_magnetostatic(
 
     rtol_B = 1e-2  # relative error tolerance of B
     rtol_A = 1e-2
-    max_B_norm = 1e5  # 2.4  # consider saturation
+    max_B_norm = 500  # 2.4  # consider saturation
     max_num_iter = 3
     reluctivity = 0
 
@@ -155,13 +155,12 @@ def solve_magnetostatic(
                 n_vertex_ids_1 = len(vertex_ids_1)
                 n_vertex_ids_2 = len(vertex_ids_2)
                 if n_vertex_ids_1 > 1 and n_vertex_ids_1 == n_vertex_ids_2:
-                    vertex_ids = np.concatenate((vertex_ids_1, vertex_ids_2))
-                    T_mat[vertex_ids] = 0
+                    T_mat[vertex_ids_1] = 0
                     # set 0
-                    S_row_ids = np.where(np.isin(S_row_mat, vertex_ids))
+                    S_row_ids = np.where(np.isin(S_row_mat, vertex_ids_1))
                     S_val_mat[S_row_ids] = 0
-                    S_row_mat = np.concatenate((S_row_mat, vertex_ids))
-                    S_col_mat = np.concatenate((S_col_mat, vertex_ids))
+                    S_row_mat = np.concatenate((S_row_mat, vertex_ids_1, vertex_ids_2))
+                    S_col_mat = np.concatenate((S_col_mat, vertex_ids_1, vertex_ids_1))
                     if tag == 'odd':
                         value = 1
                     else:

@@ -22,7 +22,7 @@ if flag_compare:
     )
 
 else:
-    if 1:
+    if 0:
         mesh_path = os.path.join(data_path, 'extraFine', 'synrm_extrafine.nas')
     else:
         mesh_path = os.path.join(data_path, 'coarse', 'synrm_coarse.nas')
@@ -35,7 +35,7 @@ else:
 ## current -> current density
 n_turn = 100
 if flag_compare:
-    winding_flag = 2
+    winding_flag = 3
     if winding_flag == 0:
         group_current_dict = {  # group_id : I (current,A)
             0: 289.7777 * n_turn,
@@ -48,11 +48,17 @@ if flag_compare:
         A_mat_femm_filename = 'A_mat_synrm_same.npy'
     elif winding_flag == 1:
         group_current_dict = {  # group_id : I (current,A)
+            2: -212.1320 * n_turn,
+            3: -212.1320 * n_turn,
+        }
+        A_mat_femm_filename = 'A_mat_synrm_23.npy'
+    elif winding_flag == 2:
+        group_current_dict = {  # group_id : I (current,A)
             4: 289.7777 * n_turn,
             5: 289.7777 * n_turn,
         }
         A_mat_femm_filename = 'A_mat_synrm_45.npy'
-    elif winding_flag == 2:
+    elif winding_flag == 3:
         group_current_dict = {  # group_id : I (current,A)
             0: -77.6457 * n_turn,
             1: -77.6457 * n_turn,
@@ -71,6 +77,7 @@ else:
         16: -77.6457 * n_turn,
         18: -77.6457 * n_turn,
     }
+    A_mat_femm_filename = 'A_mat_synrm_nastran.npy'
 
 n_group = len(group_list)  # num of groups
 group_current_density_list = np.zeros(n_group)  # group_id : J (current_density,A/m^2)

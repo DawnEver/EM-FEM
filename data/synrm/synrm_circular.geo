@@ -287,6 +287,7 @@ Color Blue {Surface{1,4,5,6,13,14,15,16,17,18};}
 Physical Line("boundary@dirichlet@0") = {62,104};
 Physical Line("boundary@symmetry@odd1") = {8,101,103};
 Physical Line("boundary@symmetry@odd2") = {10,102,105};
+// Physical Line("boundary@dirichlet@0") = {62,104,8,101,103,10,102,105};
 
 Mesh 2;
 Save "synrm_circular.msh";
