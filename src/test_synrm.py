@@ -46,18 +46,21 @@ if flag_compare:
             5: 289.7777 * n_turn,
         }
         A_mat_femm_filename = 'A_mat_synrm_same.npy'
+        A_bias = 0
     elif winding_flag == 1:
         group_current_dict = {  # group_id : I (current,A)
             2: -212.1320 * n_turn,
             3: -212.1320 * n_turn,
         }
         A_mat_femm_filename = 'A_mat_synrm_23.npy'
+        A_bias = 0
     elif winding_flag == 2:
         group_current_dict = {  # group_id : I (current,A)
             4: 289.7777 * n_turn,
             5: 289.7777 * n_turn,
         }
         A_mat_femm_filename = 'A_mat_synrm_45.npy'
+        A_bias = 0.6
     elif winding_flag == 3:
         group_current_dict = {  # group_id : I (current,A)
             0: -77.6457 * n_turn,
@@ -68,6 +71,7 @@ if flag_compare:
             5: 289.7777 * n_turn,
         }
         A_mat_femm_filename = 'A_mat_synrm.npy'
+        A_bias = 0.6
 else:
     group_current_dict = {  # group_id : I (current,A)
         5: 289.7777 * n_turn,
@@ -78,6 +82,7 @@ else:
         18: -77.6457 * n_turn,
     }
     A_mat_femm_filename = 'A_mat_synrm_nastran.npy'
+    A_bias = -0.5
 
 n_group = len(group_list)  # num of groups
 group_current_density_list = np.zeros(n_group)  # group_id : J (current_density,A/m^2)
@@ -99,6 +104,7 @@ S_mat, A_mat, T_mat, B_mat, B_norm_mat, Energy_mat = solve_magnetostatic(
     boundary_dict=boundary_dict,
     material_in_use_dict=material_in_use_dict,
     depth=0.0375,
+    A_bias=A_bias,
 )
 
 ### Post Process
@@ -114,7 +120,7 @@ centroid_mat = calc_centroid(vertex_mat)
 
 if 1 and flag_compare:
     A_mat_femm = np.load(os.path.join(data_path, 'synrm', A_mat_femm_filename))
-
+    print(np.max(A_mat_femm), np.min(A_mat_femm), np.max(A_mat), np.min(A_mat))
     plot_map(
         title='Magnetic Vector Potential[Wb/m](FEMM)',
         vertInfoMat=vertInfoMat,
@@ -157,24 +163,25 @@ if 1:
         boundary=(-boundary, boundary),
         plot_type=PlotMapType.Coutourf,
     )
-    plot_map(
-        title='Energy[W]',
-        vertInfoMat=centroid_mat,
-        c_mat=Energy_mat,
-        boundary=(-boundary, boundary),
-        plot_type=PlotMapType.Coutourf,
-    )
-    plot_map(
-        title='Matrix T[A]',
-        vertInfoMat=vertInfoMat,
-        c_mat=T_mat,
-        boundary=(-boundary, boundary),
-        plot_type=PlotMapType.Coutourf,
-    )
-    plot_map(
-        title='Group',
-        vertInfoMat=centroid_mat,
-        c_mat=trigGroupMat,
-        boundary=(-1, 100),
-        plot_type=PlotMapType.Scatter,
-    )
+    if 1:
+        plot_map(
+            title='Energy[W]',
+            vertInfoMat=centroid_mat,
+            c_mat=Energy_mat,
+            boundary=(-boundary, boundary),
+            plot_type=PlotMapType.Coutourf,
+        )
+        plot_map(
+            title='Matrix T[A]',
+            vertInfoMat=vertInfoMat,
+            c_mat=T_mat,
+            boundary=(-boundary, boundary),
+            plot_type=PlotMapType.Coutourf,
+        )
+        plot_map(
+            title='Group',
+            vertInfoMat=centroid_mat,
+            c_mat=trigGroupMat,
+            boundary=(-1, 100),
+            plot_type=PlotMapType.Scatter,
+        )

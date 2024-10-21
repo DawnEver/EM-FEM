@@ -284,10 +284,21 @@ Physical Surface("group@a1@other@air") = {1,4,5,6,13,14,15,16,17,18};
 Color Blue {Surface{1,4,5,6,13,14,15,16,17,18};}
 
 // boundary condition
-Physical Line("boundary@dirichlet@0") = {62,104};
-Physical Line("boundary@symmetry@odd1") = {8,101,103};
-Physical Line("boundary@symmetry@odd2") = {10,102,105};
-// Physical Line("boundary@dirichlet@0") = {62,104,8,101,103,10,102,105};
+flag = 2
+If(flag==0)
+    Physical Line("boundary@dirichlet@0") = {62,104};
+    Physical Line("boundary@symmetry@odd1") = {103};
+    Physical Line("boundary@symmetry@odd2") = {105};
+ElseIf(flag==1)
+    Physical Line("boundary@dirichlet@0") = {62,104,8,101,103,10,102,105};
+ElseIf(flag==2)
+    Physical Line("boundary@dirichlet@0") = {62,104};
+    Physical Line("boundary@symmetry@odd1") = {8,101,103};
+    Physical Line("boundary@symmetry@odd2") = {10,102,105};
+EndIf
+
+
+
 
 Mesh 2;
 Save "synrm_circular.msh";

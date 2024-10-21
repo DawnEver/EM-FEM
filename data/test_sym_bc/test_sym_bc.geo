@@ -3,8 +3,8 @@
 Geometry.AutoCoherence = 0;
 // Define mesh
 
-mesh_size_demo_steel = 3;
-mesh_size_cu = 3;
+mesh_size_demo_steel = 0.3;
+mesh_size_cu = 0.3;
 
 // define points
 Point(1) = {0, 0, 0, mesh_size_demo_steel};
@@ -46,8 +46,8 @@ Color Orange {Surface{2};}
 // boundary condition examples
 Physical Line("boundary@dirichlet@0") = {1,3};
 
-Physical Line("boundary@symmetry@even1") = {4};
-Physical Line("boundary@symmetry@even2") = {2};
+Physical Line("boundary@symmetry@odd1") = {2};
+Physical Line("boundary@symmetry@odd2") = {4};
 
 Mesh 2;
 Save "test_sym_bc.msh";

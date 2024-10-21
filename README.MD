@@ -46,7 +46,6 @@ pre-commit install .
 4. [Makefile](./Makefile) defines some useful tools.
 
 ## TODO
-- rewrite solver with high performance programming language(C++ or Rust).
 - Assign proper initial value with interpolation functions to accelerate convergence.
 - time step simulation & external circuit excitation
 - PM materials
@@ -59,3 +58,6 @@ pre-commit install .
 ## Ref
 - [T. A. Lipo, Introduction to AC machine design. in IEEE Press series on power engineering. Hoboken, New Jersey: IEEE Press/Wiley, 2017.](https://onlinelibrary.wiley.com/doi/book/10.1002/9781119352181)
 - [Gitbook Numerical Analysis Implementations in Python](https://laus-organization.gitbook.io/numerical-analysis-implementations-in-python/)
+
+## By-product
+- [mat-diff](./mat-diff/README.md) tiny tool to compare matrix numerically.

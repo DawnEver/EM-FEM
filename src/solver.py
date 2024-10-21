@@ -16,6 +16,7 @@ def solve_magnetostatic(
     material_in_use_dict: dict,
     boundary_dict: dict,
     depth: float = 0.005,
+    A_bias: float = 0,
 ):
     n_vert = len(vertInfoMat)
     n_trig = len(trigInfoMat)
@@ -36,7 +37,7 @@ def solve_magnetostatic(
 
     rtol_B = 1e-2  # relative error tolerance of B
     rtol_A = 1e-2
-    max_B_norm = 500  # 2.4  # consider saturation
+    max_B_norm = 1000  # 2.4  # consider saturation
     max_num_iter = 3
     reluctivity = 0
 
@@ -136,7 +137,7 @@ def solve_magnetostatic(
             n_vertex_ids = len(vertex_ids)
             if n_vertex_ids < 1:
                 continue
-            T_mat[vertex_ids] = 3 * A_const
+            T_mat[vertex_ids] = A_const + A_bias
 
             # set 0
             S_row_ids = np.where(np.isin(S_row_mat, vertex_ids))
@@ -175,7 +176,7 @@ def solve_magnetostatic(
         # https://www.osgeo.cn/scipy/reference/sparse.linalg.html#
 
         S_sp_mat = coo_matrix((S_val_mat, (S_row_mat, S_col_mat)), shape=(n_vert, n_vert))
-        A_mat, _ = sp_linalg.cg(S_sp_mat, T_mat)
+        A_mat = sp_linalg.spsolve(S_sp_mat, T_mat) - A_bias
 
         log(f'Iteration: {i_iter+1}/{max_num_iter}', 'INFO')
 
