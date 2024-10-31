@@ -24,7 +24,7 @@ The SynRM model is shown above and its stack length is 0.0375m.
 </table>
 
 
-## Verify the results|
+## Verify the results
 
 To verify the accuracy of the results,
 I modeled the SynRM in [Hi-Motor Designe](https://designer.hi-motor.site) with circular flux-barrier SynRM parametric model, which is based on [FEMM](https://www.femm.info).

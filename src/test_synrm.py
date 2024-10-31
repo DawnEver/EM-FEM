@@ -13,7 +13,7 @@ script_path = os.path.abspath(__file__)
 root_path = re.search(r'.*(EM-FEM)', script_path).group(0)
 data_path = os.path.join(root_path, 'data')
 
-flag_compare = 0
+flag_compare = 1
 ## Read Mesh
 if flag_compare:
     mesh_path = os.path.join(data_path, 'synrm', 'synrm_circular.msh')
@@ -138,9 +138,10 @@ if 1 and flag_compare:
         vertInfoMat=vertInfoMat,
         c_mat=A_mat - A_mat_femm,
         plot_type=PlotMapType.Coutourf,
+        boundary=(-0.5, 0.1),
     )
 
-if 1:
+if 0:
     if not flag_compare:
         plot_map(
             title='Magnetic Vector Potential[Wb/m]',

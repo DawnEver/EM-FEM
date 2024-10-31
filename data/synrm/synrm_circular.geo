@@ -6,6 +6,7 @@ lc1 = 1*u;
 lc2 = 0.2*u;
 
 Point (66) = {75 *u, 0 *u, 0 *u, lc0} ;
+// Point (66) = {75 *u, 0 *u, 0 *u, lc1} ;
 Point (76) = {60.6742 *u, 2.82601 *u, 0 *u, lc1} ;
 Point (77) = {59.5255 *u, 2.7725 *u, 0 *u, lc1} ;
 Point (25) = {59.5255 *u, 1.6225 *u, 0 *u, lc1} ;
@@ -101,6 +102,7 @@ Point (98) = {2.7725 *u, 59.5255 *u, 0 *u, lc1} ;
 Point (11) = {2.65075 *u, 37.9074 *u, 0 *u, lc1} ;
 Point (61) = {1.6225 *u, 59.5255 *u, 0 *u, lc1} ;
 Point (60) = {1.6225 *u, 41.9516 *u, 0 *u, lc1} ;
+// Point (68) = {0 *u, 75 *u, 0 *u, lc1} ;
 Point (68) = {0 *u, 75 *u, 0 *u, lc0} ;
 Point (69) = {0 *u, 40 *u, 0 *u, lc2} ;
 Point (17) = {0 *u, 39 *u, 0 *u, lc2} ;
@@ -284,7 +286,7 @@ Physical Surface("group@a1@other@air") = {1,4,5,6,13,14,15,16,17,18};
 Color Blue {Surface{1,4,5,6,13,14,15,16,17,18};}
 
 // boundary condition
-flag = 2
+flag = 0;
 If(flag==0)
     Physical Line("boundary@dirichlet@0") = {62,104};
     Physical Line("boundary@symmetry@odd1") = {103};
@@ -296,8 +298,6 @@ ElseIf(flag==2)
     Physical Line("boundary@symmetry@odd1") = {8,101,103};
     Physical Line("boundary@symmetry@odd2") = {10,102,105};
 EndIf
-
-
 
 
 Mesh 2;
