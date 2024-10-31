@@ -1,4 +1,5 @@
 .DS_Store
+Thumbs.db
 ignore/
 .venv/
 __pycache__/
